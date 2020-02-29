@@ -5,49 +5,31 @@ from selenium.webdriver.support.ui import Select
 from time import sleep
 import dataset
 import threading
+import traceback
 
 DB = dataset.connect("sqlite:///./mydb.db")
 USER_INFO_TAB = DB["user_info"]
 NICKNAME = "nickname"
-FIRST_NAME = "first_name"
-LAST_NAME = "last_name"
-ZIP_CODE = "zip_code"
-STATE = "state"
-CITY = "city"
-ADDRESS = "address"
-PHONE = "phone"
 MAIL = "mail"
 PAY_TYPE = "pay_type"
 CARD_NUMBER = "card_number"
 CARD_LIMIT_MONTH = "card_limit_month"
 CARD_LIMIT_YEAR = "card_limit_year"
 CVV_NUMBER = "cvv_number"
-PAYMENT_METHOD = "payment_method"
-ORDER_ID_OR_NAME = "order_id_or_name"
-RETURN_ACCOUNT = "return_account"
-TWITTER_NAME = "twitter_name"
-NOTE = "note"
+ORDERID_OR_NAME = "orderid_or_name"
+DISCORD_NAME = "twitter_name"
 
 TARGET_SITE_URL = "https://tayori.com/form/7016e619cfb10fdafa3027141cc75eec60dea703"
 CHROME_DRIVER_PATH = "./chromedriver.exe"
-HTML_FIRST_NAME_ID = '//*[@id="form-parts"]/div[1]/div/div/input'
-HTML_LAST_NAME_ID = '//*[@id="form-parts"]/div[2]/div/div/input'
-HTML_ZIP_CODE_ID = '//*[@id="form-parts"]/div[3]/div/div/input'
-HTML_STATE_ID = '//*[@id="form-parts"]/div[4]/div/div/div/div/label/select'
-HTML_CITY_ID = '//*[@id="form-parts"]/div[5]/div/div/input'
-HTML_ADDRESS_ID = '//*[@id="form-parts"]/div[6]/div/div/input'
-HTML_PHONE_ID = '//*[@id="form-parts"]/div[7]/div/div/input'
-HTML_MAIL_ID = '//*[@id="form-parts"]/div[8]/div/div/input'
-HTML_PAY_TYPE_ID = '//*[@id="form-parts"]/div[12]/div/div/div/div/label/select'
-HTML_CARD_NUM_ID = '//*[@id="form-parts"]/div[13]/div/div/input'
-HTML_CARD_LIM_MONTH_ID = '//*[@id="form-parts"]/div[14]/div/div/div/div/label/select'
-HTML_CARD_LIM_YEAR_ID = '//*[@id="form-parts"]/div[15]/div/div/div/div/label/select'
-HTML_CVV_NUM_ID = '//*[@id="form-parts"]/div[16]/div/div/input'
-HTML_PAY_METHOD_ID = '//*[@id="form-parts"]/div[17]/div/div/div/div/label/select'
-HTML_ORDER_ID_NAME_ID = '//*[@id="form-parts"]/div[18]/div/div/textarea'
-HTML_RETURN_ACCOUNT_ID = '//*[@id="form-parts"]/div[19]/div/div/textarea'
-HTML_TWITTER_ID = '//*[@id="form-parts"]/div[20]/div/div/input'
-HTML_NOTE_ID = '//*[@id="form-parts"]/div[21]/div/div/textarea'
+HTML_MAIL_ID = '//*[@id="form-parts"]/div[1]/div[1]/div/input'
+HTML_MAIL_CONFIRM_ID = '//*[@id="form-parts"]/div[1]/div[2]/div/input'
+HTML_PAY_TYPE_ID = '//*[@id="form-parts"]/div[5]/div/div/div/div/label/select'
+HTML_CARD_NUM_ID = '//*[@id="form-parts"]/div[6]/div/div/input'
+HTML_CARD_LIM_MONTH_ID = '//*[@id="form-parts"]/div[7]/div/div/div/div/label/select'
+HTML_CARD_LIM_YEAR_ID = '//*[@id="form-parts"]/div[8]/div/div/div/div/label/select'
+HTML_CVV_NUM_ID = '//*[@id="form-parts"]/div[9]/div/div/input'
+HTML_ORDERID_OR_NAME_ID = '//*[@id="form-parts"]/div[10]/div/div/textarea'
+HTML_DISCORD_NAME_ID = '//*[@id="form-parts"]/div[11]/div/div/input'
 
 STATE_TUPLE = (
     "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県", "茨城県", "栃木県", "群馬県",
@@ -71,24 +53,14 @@ WM_DELETE_WINDOW = "WM_DELETE_WINDOW"
 class UserInfo:
     def __init__(self):
         self.entry_nickname = None
-        self.entry_first_name = None
-        self.entry_last_name = None
-        self.entry_zip_code = None
-        self.box_state = None
-        self.entry_city = None
-        self.entry_address = None
-        self.entry_phone = None
         self.entry_mail = None
         self.box_pay_type = None
         self.entry_card_number = None
         self.box_month = None
         self.box_year = None
         self.entry_cvv_number = None
-        self.box_payment_method = None
-        self.entry_order_id_or_name = None
-        self.entry_return_account = None
+        self.entry_orderid_or_name = None
         self.entry_twitter_name = None
-        self.entry_note = None
 
 
 class SitePasteThread(threading.Thread):
@@ -110,29 +82,21 @@ class SitePasteThread(threading.Thread):
             driver = webdriver.Chrome(CHROME_DRIVER_PATH)
             driver.get(TARGET_SITE_URL)
 
-            driver.find_element_by_xpath(HTML_FIRST_NAME_ID).send_keys(self.userinfo_rec[FIRST_NAME])
-            driver.find_element_by_xpath(HTML_LAST_NAME_ID).send_keys(self.userinfo_rec[LAST_NAME])
-            driver.find_element_by_xpath(HTML_ZIP_CODE_ID).send_keys(self.userinfo_rec[ZIP_CODE])
-            self.select_box(driver, HTML_STATE_ID, self.userinfo_rec[STATE])
-            driver.find_element_by_xpath(HTML_CITY_ID).send_keys(self.userinfo_rec[CITY])
-            driver.find_element_by_xpath(HTML_ADDRESS_ID).send_keys(self.userinfo_rec[ADDRESS])
-            driver.find_element_by_xpath(HTML_PHONE_ID).send_keys(self.userinfo_rec[PHONE])
             driver.find_element_by_xpath(HTML_MAIL_ID).send_keys(self.userinfo_rec[MAIL])
+            driver.find_element_by_xpath(HTML_MAIL_CONFIRM_ID).send_keys(self.userinfo_rec[MAIL])
             self.select_box(driver, HTML_PAY_TYPE_ID, self.userinfo_rec[PAY_TYPE])
             driver.find_element_by_xpath(HTML_CARD_NUM_ID).send_keys(self.userinfo_rec[CARD_NUMBER])
             self.select_box(driver, HTML_CARD_LIM_MONTH_ID, self.userinfo_rec[CARD_LIMIT_MONTH])
             self.select_box(driver, HTML_CARD_LIM_YEAR_ID, self.userinfo_rec[CARD_LIMIT_YEAR])
             driver.find_element_by_xpath(HTML_CVV_NUM_ID).send_keys(self.userinfo_rec[CVV_NUMBER])
-            self.select_box(driver, HTML_PAY_METHOD_ID, self.userinfo_rec[PAYMENT_METHOD])
-            driver.find_element_by_xpath(HTML_ORDER_ID_NAME_ID).send_keys(self.userinfo_rec[ORDER_ID_OR_NAME])
-            driver.find_element_by_xpath(HTML_RETURN_ACCOUNT_ID).send_keys(self.userinfo_rec[RETURN_ACCOUNT])
-            driver.find_element_by_xpath(HTML_TWITTER_ID).send_keys(self.userinfo_rec[TWITTER_NAME])
-            driver.find_element_by_xpath(HTML_NOTE_ID).send_keys(self.userinfo_rec[NOTE])
+            driver.find_element_by_xpath(HTML_ORDERID_OR_NAME_ID).send_keys(self.userinfo_rec[ORDERID_OR_NAME])
+            driver.find_element_by_xpath(HTML_DISCORD_NAME_ID).send_keys(self.userinfo_rec[DISCORD_NAME])
 
             while True:
                 tmp = driver.page_source
                 sleep(2)
         except:
+            print(traceback.format_exc())
             print("OK")
             pass
         finally:
@@ -182,24 +146,14 @@ def delete_insert(root, sub_w, parent_frame, old_nickname):
 
     new_data = dict(
         nickname=new_nickname,
-        first_name=userinfo.entry_first_name.get(),
-        last_name=userinfo.entry_last_name.get(),
-        zip_code=userinfo.entry_zip_code.get(),
-        state=userinfo.box_state.get(),
-        city=userinfo.entry_city.get(),
-        address=userinfo.entry_address.get(),
-        phone=userinfo.entry_phone.get(),
         mail=userinfo.entry_mail.get(),
         pay_type=userinfo.box_pay_type.get(),
         card_number=userinfo.entry_card_number.get(),
         card_limit_month=userinfo.box_month.get(),
         card_limit_year=userinfo.box_year.get(),
         cvv_number=userinfo.entry_cvv_number.get(),
-        payment_method=userinfo.box_payment_method.get(),
-        order_id_or_name=userinfo.entry_order_id_or_name.get(),
-        return_account=userinfo.entry_return_account.get(),
+        orderid_or_name=userinfo.entry_orderid_or_name.get(),
         twitter_name=userinfo.entry_twitter_name.get(),
-        note=userinfo.entry_note.get()
     )
 
     if old_nickname == new_nickname:
@@ -254,20 +208,6 @@ def setup_editable_form(frame, is_update):
     row = 0
     userinfo.entry_nickname = mk_label_entry("本ツールの[登録済みリスト]の表示名", frame, row)
     row += 1
-    userinfo.entry_first_name = mk_label_entry("名前(性)", frame, row)
-    row += 1
-    userinfo.entry_last_name = mk_label_entry("名前(名)", frame, row)
-    row += 1
-    userinfo.entry_zip_code = mk_label_entry("郵便番号(半角数字ハイフン不要)", frame, row)
-    row += 1
-    userinfo.box_state = mk_label_box("都道府県", STATE_TUPLE, frame, row)
-    row += 1
-    userinfo.entry_city = mk_label_entry("市区群", frame, row)
-    row += 1
-    userinfo.entry_address = mk_label_entry("町村番地・建物名・部屋番号", frame, row)
-    row += 1
-    userinfo.entry_phone = mk_label_entry("電話番号(半角数字ハイフン不要)", frame, row)
-    row += 1
     userinfo.entry_mail = mk_label_entry("メールアドレス", frame, row)
     row += 1
     userinfo.box_pay_type = mk_label_box("お支払方法", PAY_TYPE_TUPLE, frame, row)
@@ -280,15 +220,9 @@ def setup_editable_form(frame, is_update):
     row += 1
     userinfo.entry_cvv_number = mk_label_entry("CVV番号（代引き時は空欄）", frame, row)
     row += 1
-    userinfo.box_payment_method = mk_label_box("決済方法", PAY_METHOD_TUPLE, frame, row)
+    userinfo.entry_orderid_or_name = mk_label_entry("支払い時の注文ID or 名前", frame, row)
     row += 1
-    userinfo.entry_order_id_or_name = mk_label_entry("BASEお支払い時のご注文IDもしくはお名前\nor 銀行お振込時のお名前", frame, row)
-    row += 1
-    userinfo.entry_return_account = mk_label_entry("銀行振込時のご返金先口座\n（銀行振込ではない方記載不要）", frame, row)
-    row += 1
-    userinfo.entry_twitter_name = mk_label_entry("Twitter名", frame, row)
-    row += 1
-    userinfo.entry_note = mk_label_entry("備考", frame, row)
+    userinfo.entry_twitter_name = mk_label_entry("Discord名", frame, row)
     row += 1
 
     if is_update:
@@ -355,24 +289,14 @@ def inject_select_info_to_form():
     nickname = get_select_nickname()
     userinfo_rec = USER_INFO_TAB.find_one(nickname=nickname)
     userinfo.entry_nickname.insert(0, nickname)
-    userinfo.entry_first_name.insert(0, userinfo_rec[FIRST_NAME])
-    userinfo.entry_last_name.insert(0, userinfo_rec[LAST_NAME])
-    userinfo.entry_zip_code.insert(0, userinfo_rec[ZIP_CODE])
-    userinfo.box_state.set(userinfo_rec[STATE])
-    userinfo.entry_city.insert(0, userinfo_rec[CITY])
-    userinfo.entry_address.insert(0, userinfo_rec[ADDRESS])
-    userinfo.entry_phone.insert(0, userinfo_rec[PHONE])
     userinfo.entry_mail.insert(0, userinfo_rec[MAIL])
     userinfo.box_pay_type.set(userinfo_rec[PAY_TYPE])
     userinfo.entry_card_number.insert(0, userinfo_rec[CARD_NUMBER])
     userinfo.box_month.set(userinfo_rec[CARD_LIMIT_MONTH])
     userinfo.box_year.set(userinfo_rec[CARD_LIMIT_YEAR])
     userinfo.entry_cvv_number.insert(0, userinfo_rec[CVV_NUMBER])
-    userinfo.box_payment_method.set(userinfo_rec[PAYMENT_METHOD])
-    userinfo.entry_order_id_or_name.insert(0, userinfo_rec[ORDER_ID_OR_NAME])
-    userinfo.entry_return_account.insert(0, userinfo_rec[RETURN_ACCOUNT])
-    userinfo.entry_twitter_name.insert(0, userinfo_rec[TWITTER_NAME])
-    userinfo.entry_note.insert(0, userinfo_rec[NOTE])
+    userinfo.entry_orderid_or_name.insert(0, userinfo_rec[ORDERID_OR_NAME])
+    userinfo.entry_twitter_name.insert(0, userinfo_rec[DISCORD_NAME])
 
 
 def open_update_window():
