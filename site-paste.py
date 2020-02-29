@@ -2,10 +2,12 @@ from tkinter import *
 from tkinter import ttk
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 import dataset
 import threading
 import traceback
+import logging
 
 DB = dataset.connect("sqlite:///./mydb.db")
 USER_INFO_TAB = DB["user_info"]
@@ -86,9 +88,9 @@ class SitePasteThread(threading.Thread):
             while True:
                 tmp = driver.page_source
                 sleep(2)
+        except NoSuchElementException as e:
+            logging.error(traceback.format_exc())
         except:
-            print(traceback.format_exc())
-            print("OK")
             pass
         finally:
             driver.quit()
@@ -180,6 +182,7 @@ def insert_or_update(root, parent_frame, is_update, nickname):
 def enable_parent_frame_and_destroy(parent_frame, window):
     enable_parent_frame(parent_frame)
     window.destroy()
+
 
 def enable_parent_frame(parent_frame):
     for child in parent_frame.winfo_children():
@@ -436,5 +439,6 @@ if __name__ == '__main__':
     button_update = None
     button_delete = None
     button_insert = None
+    logging.basicConfig(filename='info.log', level=logging.INFO)
     userinfo = UserInfo()
     main()
