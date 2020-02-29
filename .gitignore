@@ -1,3 +1,6 @@
 *
 !site-paste.py
 !.gitignore
+!Pipfile
+!Pipfile.lock
+!chromedriver.exe
