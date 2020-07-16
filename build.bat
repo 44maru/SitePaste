@@ -2,6 +2,6 @@
 
 call .venv\Scripts\activate
 rem pkg_resources.py2_warn をhidden importに追加したspecファイルでbuild
-pyInstaller --onefile --noconsole site-paste.spec
+pyInstaller site-paste.spec
 
 pause

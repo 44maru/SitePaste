@@ -1,5 +1,6 @@
 *
 !site-paste.py
+!site-paste.spec
 !build.bat
 !.gitignore
 !Pipfile
