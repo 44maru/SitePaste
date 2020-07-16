@@ -25,13 +25,12 @@ TARGET_SITE_URL = "https://tayori.com/form/7016e619cfb10fdafa3027141cc75eec60dea
 CHROME_DRIVER_PATH = "./chromedriver.exe"
 HTML_MAIL_ID = '//*[@id="form-parts"]/div[1]/div[1]/div/input'
 HTML_MAIL_CONFIRM_ID = '//*[@id="form-parts"]/div[1]/div[2]/div/input'
-HTML_PAY_TYPE_ID = '//*[@id="form-parts"]/div[5]/div/div/div/div/label/select'
-HTML_CARD_NUM_ID = '//*[@id="form-parts"]/div[6]/div/div/input'
-HTML_CARD_LIM_MONTH_ID = '//*[@id="form-parts"]/div[7]/div/div/div/div/label/select'
-HTML_CARD_LIM_YEAR_ID = '//*[@id="form-parts"]/div[8]/div/div/div/div/label/select'
-HTML_CVV_NUM_ID = '//*[@id="form-parts"]/div[9]/div/div/input'
-HTML_ORDERID_OR_NAME_ID = '//*[@id="form-parts"]/div[10]/div/div/textarea'
-HTML_DISCORD_NAME_ID = '//*[@id="form-parts"]/div[11]/div/div/input'
+HTML_PAY_TYPE_ID = '//*[@id="form-parts"]/div[4]/div/div/div/div/label/select'
+HTML_CARD_NUM_ID = '//*[@id="form-parts"]/div[5]/div/div/input'
+HTML_CARD_LIM_MONTH_ID = '//*[@id="form-parts"]/div[6]/div/div/div/div/label/select'
+HTML_CARD_LIM_YEAR_ID = '//*[@id="form-parts"]/div[7]/div/div/div/div/label/select'
+HTML_CVV_NUM_ID = '//*[@id="form-parts"]/div[8]/div/div/input'
+HTML_DISCORD_NAME_ID = '//*[@id="form-parts"]/div[9]/div/div/input'
 
 PAY_TYPE_TUPLE = ("Visa", "American Express", "Mastercard", "JCB", "代金引換")
 MONTH_TUPLE = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
@@ -82,7 +81,6 @@ class SitePasteThread(threading.Thread):
             self.select_box(driver, HTML_CARD_LIM_MONTH_ID, self.userinfo_rec[CARD_LIMIT_MONTH])
             self.select_box(driver, HTML_CARD_LIM_YEAR_ID, self.userinfo_rec[CARD_LIMIT_YEAR])
             driver.find_element_by_xpath(HTML_CVV_NUM_ID).send_keys(self.userinfo_rec[CVV_NUMBER])
-            driver.find_element_by_xpath(HTML_ORDERID_OR_NAME_ID).send_keys(self.userinfo_rec[ORDERID_OR_NAME])
             driver.find_element_by_xpath(HTML_DISCORD_NAME_ID).send_keys(self.userinfo_rec[DISCORD_NAME])
 
             while True:
